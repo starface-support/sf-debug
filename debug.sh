@@ -1,34 +1,37 @@
 #!/bin/bash
 
 finish() {
-	ARCHIVE="$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
-    zip -r /root/$ARCHIVE $FOLDER
+	ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
+	echo Finishing up, zipping $FOLDER to $ARCHIVE
+	
+    zip -r $ARCHIVE "$FOLDER" "/etc/asterisk/" "/var/log"
 	rm -rf $FOLDER/
 }
 
 FOLDER="$(mktemp -q -d)"
-NET="$FOLDER/net"
 AST="$FOLDER/asterisk"
+APPLIANCE="$FOLDER/appliance"
+OS="$APPLIANCE/os"
+NET="$OS/net"
 
 trap finish EXIT
 
-mkdir $NET
-mkdir $AST
+mkdir $AST $APPLIANCE $OS $NET
 
 echo Identifying appliance
-appliance_identify.sh >$FOLDER/appliance_identify.txt
-appliance_info.sh check_cards >$FOLDER/appliance_cards.txt
+appliance_identify.sh >$APPLIANCE/appliance_identify.txt
+appliance_info.sh check_cards >$APPLIANCE/appliance_cards.txt
 
 echo Dumping processes
-uptime > $FOLDER/proc.txt
-ps aux >> $FOLDER/proc.txt
+uptime > $OS/proc.txt
+ps aux >> $OS/proc.txt
 
 echo Networking informations
 lsof -i > $NET/lsof-i.txt
 netstat -tulpen > $NET/netstat-tulpen.txt
 netstat -an > $NET/netstat-an.txt
 ifconfig > $NET/ifconfig.txt
-zip -r $NET/nw-scripts.tar.gz /etc/sysconfig/network-scripts/ >/dev/null
+zip -r $NET/nw-scripts.zip /etc/sysconfig/network-scripts/ >/dev/null
 
 iptables-save >$NET/iptables-current.txt
 
@@ -53,9 +56,4 @@ echo Verifying RPMs
 rpm -qa > $FOLDER/rpm_qa.txt
 rpm -Va > $FOLDER/rpm_va.txt
 
-echo Gathering logs
-zip -r $FOLDER/logs.zip /var/log /root/install.*
-zip -r $FOLDER/asterisk.zip /etc/asterisk
-
-echo Finishing up
 finish
