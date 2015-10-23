@@ -32,8 +32,11 @@ netstat -tulpen > $NET/netstat-tulpen.txt
 netstat -an > $NET/netstat-an.txt
 ifconfig > $NET/ifconfig.txt
 zip -r $NET/nw-scripts.zip /etc/sysconfig/network-scripts/ >/dev/null
-
 iptables-save >$NET/iptables-current.txt
+
+echo Checking SF avaibility
+curl -k https://license.starface.de 2>&1> >$NET/https-license.txt
+curl -k http://starface.de 2>&1> >$NET/https-license.txt
 
 echo Poking Asterisk
 asterisk -rx 'module show' > $AST/modules.txt
@@ -52,7 +55,7 @@ lspci > $FOLDER/pci.txt
 lsusb > $FOLDER/usb.txt
 df -h > $FOLDER/df.txt
 
-echo Verifying RPMs
+echo Verifying RPMs, this will take some time. Skip with CTRL + C
 rpm -qa > $FOLDER/rpm_qa.txt
 rpm -Va > $FOLDER/rpm_va.txt
 
