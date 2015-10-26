@@ -4,7 +4,7 @@ finish() {
 	ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
 	
 	echo Finishing up, zipping $FOLDER to $ARCHIVE	
-    zip -r $ARCHIVE "$FOLDER" "/etc/asterisk/" "/var/log"
+    zip -qr $ARCHIVE /etc/asterisk/ /var/log $FOLDER/
 	rm -rf $FOLDER/
 }
 
@@ -31,13 +31,13 @@ lsof -i 2>&1>$NET/lsof-i.txt
 netstat -tulpen 2>&1>$NET/netstat-tulpen.txt
 netstat -an 2>&1>$NET/netstat-an.txt
 ifconfig 2>&1>$NET/ifconfig.txt
-zip -r $NET/nw-scripts.zip /etc/sysconfig/network-scripts/
+zip -qr $NET/nw-scripts.zip /etc/sysconfig/network-scripts/
 iptables-save 2>&1>$NET/iptables-current.txt
 route -n 2>&1>$NET/routes.txt
 
 echo Checking STARFACE HQ avaibility...
-curl -k https://license.starface.de 2>&1> >$NET/https-license.txt
-curl http://starface.de 2>&1> >$NET/https-license.txt
+curl -k https://license.starface.de 2>&1> $NET/https-license.txt
+curl http://starface.de 2>&1> $NET/https-license.txt
 
 echo Poking Asterisk
 asterisk -rx 'module show' 2>&1>$AST/modules.txt
@@ -46,7 +46,7 @@ asterisk -rx 'sip show registry' 2>&1>$AST/registry.txt
 asterisk -rx 'sip show channels' 2>&1>$AST/sip_channels.txt
 asterisk -rx 'core show channels' 2>&1>$AST/core_channels.txt
 
-echo Poking Java... Skip with CTRL + C
+echo Poking Java...
 jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
 jmap -heap $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/heap.txt
 jstack $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/jstack.txt
@@ -59,5 +59,3 @@ df -h 2>&1>$FOLDER/df.txt
 echo Verifying RPMs, this will take some time. Skip with CTRL + C
 rpm -qa 2>&1>$FOLDER/rpm_qa.txt
 rpm -Va 2>&1>$FOLDER/rpm_va.txt
-
-finish
