@@ -45,6 +45,8 @@ asterisk -rx 'sip show peers' 2>&1>$AST/peers.txt
 asterisk -rx 'sip show registry' 2>&1>$AST/registry.txt
 asterisk -rx 'sip show channels' 2>&1>$AST/sip_channels.txt
 asterisk -rx 'core show channels' 2>&1>$AST/core_channels.txt
+asterisk -rx 'pri show spans' 2>&1>$AST/pri_spans.txt
+asterisk -rx 'srx show layers' 2>&1>$AST/srx_layers.txt
 
 echo Poking Java...
 jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
