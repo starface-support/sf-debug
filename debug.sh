@@ -2,8 +2,8 @@
 
 finish() {
 	ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
-	
-	echo Finishing up, zipping $FOLDER to $ARCHIVE	
+
+	echo Finishing up, zipping $FOLDER to $ARCHIVE
     zip -qr $ARCHIVE /etc/asterisk/ /var/log $FOLDER/
 	rm -rf $FOLDER/
 }
@@ -54,9 +54,14 @@ jmap -heap $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/heap.txt
 jstack $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/jstack.txt
 
 echo Checking devices
-lspci 2>&1>$FOLDER/pci.txt
-lsusb 2>&1>$FOLDER/usb.txt
-df -h 2>&1>$FOLDER/df.txt
+# ToDo Merge files
+lspci 2>&1>$APPLIANCE/pci.txt
+lspci 2>&1>>$APPLIANCE/pci.txt
+# ToDo Merge files
+lsusb 2>&1>$APPLIANCE/usb.txt
+lsusb 2>&1>>$APPLIANCE/usb.txt
+df -h 2>&1>$APPLIANCE/df.txt
+lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE 2>&1>$APPLIANCE/lsblk.txt
 
 echo Verifying RPMs, this will take some time. Skip with CTRL + C
 rpm -qa 2>&1>$FOLDER/rpm_qa.txt
