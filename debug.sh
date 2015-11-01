@@ -11,13 +11,11 @@ finish() {
 		vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
 		zip -qr $ARCHIVE /var/log $FOLDER/
 	fi
-	
+
 	vecho "Deleting $FOLDER"
 	rm -rf $FOLDER/
 }
 
-# ToDo:
-# These ought to be parameters. Just set the defaults here.
 rpmverification=true
 javadump=true
 verbose=true
@@ -138,11 +136,11 @@ main() {
 }
 
 printHelp() {
-	echo "debug.sh [-v|q] [-j, -r, -a] [-h]"
+	echo "debug.sh [-v|q] [-j] [-r] [-a] [-h]"
 	echo "-v: Verbose output (inner function calls)"
 	echo "-q: Minimum output (quiet)"
 	echo "-j: No Java memorydump"
-	echo "-r: Dont verify RPMs"
+	echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
 	echo "-a: Dont include /etc/asterisk"
 	echo "-h: Help (this screen)"
 }
