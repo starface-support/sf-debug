@@ -9,16 +9,16 @@
 
 ## Option 1: Download and execute
 - Download the script to your appliance (e.g. /root/debug.sh) and make it executable.
-For that, execute
-`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh` within the shell (SSH).
-- Start the script (you can use [Parameters](#Parameters)):
+For that, execute<br>
+`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh`<br>within the shell (SSH).
+- Start the script (you can use [Parameters](#Parameters)):<br>
 `/root/debug.sh`
 * Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
 
 ## Option 2: Execute via cURL
 This saves your the steps of downloading and chmoding the script. Also, the script is always up to date.
 
-* Execute `curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh | /bin/bash` in the shell.
+* Execute<br>`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh | /bin/bash`<br>in the shell.
 * Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
 
 ## <a name="Paramters"></a>Parameters (see #9)
