@@ -4,8 +4,14 @@ finish() {
 	echodelim "Done!"
 	ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
 
-	vecho "Finishing up, zipping  $FOLDER to $ARCHIVE"
-  zip -qr $ARCHIVE /etc/asterisk/ /var/log $FOLDER/
+	if [[ $inclDialplan = true ]]; then
+		vecho "Finishing up, zipping $FOLDER, /var/log and /etc/asterisk to $ARCHIVE"
+		zip -qr $ARCHIVE /etc/asterisk/ /var/log $FOLDER/
+	else
+		vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
+		zip -qr $ARCHIVE /var/log $FOLDER/
+	fi
+	
 	vecho "Deleting $FOLDER"
 	rm -rf $FOLDER/
 }
@@ -16,6 +22,7 @@ rpmverification=true
 javadump=true
 verbose=true
 quiet=false
+inclDialplan=true
 
 hw-info(){
 	echodelim "Hardware"
@@ -78,10 +85,10 @@ java-details(){
 	if [[ "$javadump" = true ]]; then
 		jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
 	fi
-	vecho Getting heap summary
+	vecho "Getting heap summary"
 	jmap -heap $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/heap.txt
 
-	vecho Whats in the Stack?
+	vecho "Whats in the Stack?"
 	jstack -Fl $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/jstack.txt
 }
 
@@ -129,5 +136,42 @@ main() {
 	java-details
 	rpm-details
 }
+
+printHelp() {
+	echo "debug.sh [-v|q] [-j, -r, -a] [-h]"
+	echo "-v: Verbose output (inner function calls)"
+	echo "-q: Minimum output (quiet)"
+	echo "-j: No Java memorydump"
+	echo "-r: Dont verify RPMs"
+	echo "-a: Dont include /etc/asterisk"
+	echo "-h: Help (this screen)"
+}
+
+for i in "$@"
+do
+	case $i in
+	    -v)
+	    verbose=true
+	    ;;
+	    -q)
+	    quiet=true
+	    ;;
+	    -j)
+	    javadump=false
+	    ;;
+	    -r)
+	    rpmverification=false
+	    ;;
+			-a)
+			inclDialplan=false
+			;;
+			-h)
+			printHelp
+			exit
+			;;
+	    *)
+	    ;;
+	esac
+done
 
 main
