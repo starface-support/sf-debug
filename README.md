@@ -1,25 +1,27 @@
 # How to use this script?
 ## Pre-Flight checklist
 ### Required
-- [ ] [SSH Access](http://wiki.starface.de/index.php/SSH)
-- [ ] [Root password](http://wiki.starface.de/index.php/Root_Passwort). [Lost your root password?][1]
+- [ ] [SSH Access](http://wiki.starface.de/index.php/SSH) to the STARFACE Appliance
+- [ ] [Root password](http://wiki.starface.de/index.php/Root_Passwort). [Lost your root password?](#fn1)
 - [ ] An SSH / sFTP client, if you're using Windows consider [BitVise (Tunnelier)](https://www.bitvise.com/download-area)
-
+---
 ## Option 1: Download and execute
 - Download the script to your appliance (e.g. /root/debug.sh) and make it executable.
 For that, execute
 `curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh` within the shell (SSH).
-- Start the script (you can use [Parameters][Parameters (see #9)]):
+- Start the script (you can use [Parameters](#Parameters)):
 `/root/debug.sh`
-
 * Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
+---
 
 ## Option 2: Execute via cURL
 This saves your the steps of downloading and chmoding the script. Also, the script is always up to date.
 
 * Execute `curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh | /bin/bash` on the shell.
+* Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
+---
 
-## Parameters (see #9)
+## <a name="Paramters"></a>Parameters (see #9)
 You can change the behaviour of the script, depending on which Paramters you pass along:
 ```
 debug.sh [-v|q] [-j] [-r] [-a] [-h]
@@ -38,5 +40,7 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h]
 `./debug.sh -j -r -a`
 * You don't want to include the passwords of the SIP accounts:
 `./debug.sh -a`
+---
 
-[1]:Boot into [Single User Mode](http://wiki.starface.de/index.php/Single_user_mode) to change it or reinstall :(
+<a name="fn1"></a>1:
+Boot into [Single User Mode](http://wiki.starface.de/index.php/Single_user_mode) to change it or reinstall :(
