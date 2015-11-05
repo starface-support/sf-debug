@@ -71,7 +71,11 @@ ast-details(){
 	asterisk -rx 'sip show peers' 2>&1>$AST/peers.txt
 	asterisk -rx 'sip show registry' 2>&1>$AST/registry.txt
 	asterisk -rx 'sip show channels' 2>&1>$AST/sip_channels.txt
+
+  vecho "Retrieving core information"
 	asterisk -rx 'core show channels' 2>&1>$AST/core_channels.txt
+	asterisk -rx 'core show threads' 2>&1>$AST/core_threads.txt
+	asterisk -rx 'core show taskprocessors' 2>&1>$AST/core_taskprocessors.txt
 
 	vecho "Retrieving ISDN configurations and alarms.."
 	asterisk -rx 'pri show spans' 2>&1>$AST/pri_spans.txt
