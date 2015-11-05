@@ -142,6 +142,7 @@ printHelp() {
 	echo "-j: No Java memorydump"
 	echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
 	echo "-a: Dont include /etc/asterisk"
+	echo "-fs: Force fsck for the root partition on the next boot"
 	echo "-h: Help (this screen)"
 }
 
@@ -166,6 +167,10 @@ do
 			-h)
 			printHelp
 			exit
+			;;
+			-fs)
+			touch /forcefsck
+			vecho "Forcing fsck for / on next boot"
 			;;
 	    *)
 	    ;;

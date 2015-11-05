@@ -29,6 +29,7 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h]
 -j: No Java memorydump
 -r: Dont verify RPMs, may save a lot of time if unnecessary
 -a: Dont include /etc/asterisk
+-fs: Force fsck for the root partition on the next boot
 -h: Help (this screen)
 ```
 
