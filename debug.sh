@@ -17,7 +17,7 @@ finish() {
 }
 
 rpmverification=true
-javadump=true
+javadump=false
 verbose=true
 quiet=false
 inclDialplan=true
@@ -84,14 +84,19 @@ ast-details(){
 
 java-details(){
 	echodelim "Java"
-	if [[ "$javadump" = true ]]; then
-		jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
+	_javaPID="$(ps aux | awk '/[j]ava -Djavax/ { print $2 }')"
+	if [ ! -z "$_javaPID" ]; then
+		if [[ "$javadump" = true ]]; then
+			vecho "Whats in the jStack?"
+			jstack -l $_javaPID 2>&1>$FOLDER/jstack.txt
+			vecho "Creating Javadump"
+			jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
+		fi
+		vecho "Getting heap summary"
+		jmap -heap $_javaPID 2>&1>$FOLDER/heap.txt
+	else
+		vecho "No Java PID found. Skipping..."
 	fi
-	vecho "Getting heap summary"
-	jmap -heap $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/heap.txt
-
-	vecho "Whats in the Stack?"
-	jstack -Fl $(ps aux | awk '/[j]ava -Djavax/ { print $2 }') 2>&1>$FOLDER/jstack.txt
 }
 
 rpm-details(){
@@ -143,7 +148,7 @@ printHelp() {
 	echo "debug.sh [-v|q] [-j] [-r] [-a] [-h]"
 	echo "-v: Verbose output (inner function calls)"
 	echo "-q: Minimum output (quiet)"
-	echo "-j: No Java memorydump"
+	echo "-j: Create Java memorydump"
 	echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
 	echo "-a: Dont include /etc/asterisk"
 	echo "-fs: Force fsck for the root partition on the next boot"
@@ -160,7 +165,7 @@ do
 	    quiet=true
 	    ;;
 	    -j)
-	    javadump=false
+	    javadump=true
 	    ;;
 	    -r)
 	    rpmverification=false

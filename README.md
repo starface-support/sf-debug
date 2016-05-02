@@ -26,7 +26,7 @@ You can change the behaviour of the script, depending on which Paramters you pas
 debug.sh [-v|q] [-j] [-r] [-a] [-h]
 -v: Verbose output (inner function calls)
 -q: Minimum output (quiet)
--j: No Java memorydump
+-j: Create Java memorydump
 -r: Dont verify RPMs, may save a lot of time if unnecessary
 -a: Dont include /etc/asterisk
 -fs: Force fsck for the root partition on the next boot
@@ -35,9 +35,9 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h]
 
 ### Examples
 * You've been tasked to verify integrity of all installed RPM Pakets. You don't need a Java memory dump:<br>
-`./debug.sh -j`
+`./debug.sh`
 * You just need the logfiles from the appliance:<br>
-`./debug.sh -j -r -a`
+`./debug.sh -r -a`
 * You don't want to include the passwords of the SIP accounts:<br>
 `./debug.sh -a`
 
