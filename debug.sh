@@ -29,18 +29,14 @@ hw-info(){
 	appliance_info.sh check_cards 2>&1>$APPLIANCE/appliance_cards.txt
 
 	vecho "Checking devices"
-
 	# ToDo Merge files
 	lspci 2>&1>$APPLIANCE/pci.txt
-	lspci -t 2>&1>>$APPLIANCE/pci.txt
-
+	lspci 2>&1>>$APPLIANCE/pci.txt
 	# ToDo Merge files
 	lsusb 2>&1>$APPLIANCE/usb.txt
-
-	vecho "Checking free space"
-	lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE 2>&1>$APPLIANCE/lsblk.txt
+	lsusb 2>&1>>$APPLIANCE/usb.txt
 	df -h 2>&1>$APPLIANCE/df.txt
-
+	lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE 2>&1>$APPLIANCE/lsblk.txt
 }
 
 os-details(){
