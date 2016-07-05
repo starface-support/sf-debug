@@ -6,7 +6,7 @@ finish() {
 
 	if [[ $inclDialplan = true ]]; then
 		vecho "Finishing up, zipping $FOLDER, /var/log and /etc/asterisk to $ARCHIVE"
-		zip -qr $ARCHIVE /etc/asterisk/ /etc/dahdi /var/log $FOLDER/
+		zip -qr $ARCHIVE /etc/asterisk/ /var/log $FOLDER/
 	else
 		vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
 		zip -qr $ARCHIVE /var/log $FOLDER/
@@ -103,17 +103,6 @@ java-details(){
 	else
 		vecho "No Java PID found. Skipping..."
 	fi
-}
-
-config-dump(){
-	echodelim "Configuration"
-	vecho "Getting general settings..."
-	vecho "setup-Table"
-	psql asterisk -c 'SELECT * FROM setup WHERE "key" !~* '\''(pass?.)|(secret)|(auth)|(dropbox)'\'';' 2>&1>$FOLDER/db-setup.txt
-	vecho "configgeneral-Table"
-	psql asterisk -c 'SELECT * FROM configgeneral;' 2>&1>$FOLDER/db-configgeneral.txt
-	vecho "Numberblocks"
-	psql asterisk -c 'SELECT n.*, l.wirename FROM numberblocks n, lineconfiguration l WHERE l.id = n.lid;'
 }
 
 rpm-details(){
