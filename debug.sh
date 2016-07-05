@@ -34,9 +34,7 @@ hw-info(){
 	lspci 2>&1>$APPLIANCE/pci.txt
 	lspci -t 2>&1>>$APPLIANCE/pci.txt
 
-	# ToDo Merge files
-	lsusb 2>&1>$APPLIANCE/usb.txt
-	lsusb -t 2>&1>>$APPLIANCE/usb.txt
+	lsusb 2>&1>$APPLIANCE/usb.txt && lsusb -t 2>&1>>$APPLIANCE/usb.txt
 
 	vecho "Checking free space"
 	lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE 2>&1>$APPLIANCE/lsblk.txt
@@ -105,6 +103,17 @@ java-details(){
 	fi
 }
 
+config-dump(){
+	echodelim "Configuration"
+	vecho "Getting general settings..."
+	vecho "setup-Table"
+	psql asterisk -c 'SELECT * FROM setup WHERE "key" !~* '\''(pass?.)|(secret)|(auth)|(dropbox)'\'';' 2>&1>$FOLDER/db-setup.txt
+	vecho "configgeneral-Table"
+	psql asterisk -c 'SELECT * FROM configgeneral;' 2>&1>$FOLDER/db-configgeneral.txt
+	vecho "Numberblocks"
+	psql asterisk -c 'SELECT n.*, l.wirename FROM numberblocks n, lineconfiguration l WHERE l.id = n.lid;' 2>&1>$FOLDER/db-numberblocks.txt
+}
+
 rpm-details(){
 	echodelim "RPM"
 	echo Enumerating RPMs
@@ -146,6 +155,7 @@ main() {
 	os-details
 	nw-details
 	ast-details
+	config-dump
 	java-details
 	rpm-details
 }
