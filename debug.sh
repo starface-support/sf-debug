@@ -29,7 +29,6 @@ hw-info(){
   vecho "Identifying appliance..."
   appliance_identify.sh &>$APPLIANCE/appliance_identify.txt
   appliance_info.sh check_cards &>$APPLIANCE/appliance_cards.txt
-
   vecho "Checking devices"
 
   # ToDo Merge files
@@ -42,7 +41,6 @@ hw-info(){
   lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE &>$APPLIANCE/lsblk.txt
   df -h &>$APPLIANCE/df.txt
   free &>$APPLIANCE/free.txt
-
 }
 
 os-details(){
