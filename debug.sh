@@ -8,14 +8,14 @@ finish() {
 		exit 1
   elif [[ $inclDialplan = true ]]; then
     vecho "Finishing up, zipping $FOLDER, /var/log and /etc/asterisk to $ARCHIVE"
-    zip -qr $ARCHIVE /etc/asterisk/ /var/log $FOLDER/
+    nice -15 ionice -c 2 -n 5 zip -qr $ARCHIVE /etc/asterisk /var/log $FOLDER/
   else
     vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
-    zip -qr $ARCHIVE /var/log $FOLDER/
+    nice -15 ionice -c 2 -n 5 zip -qr $ARCHIVE /var/log $FOLDER/
   fi
 
   vecho "Deleting $FOLDER"
-  rm -rf $FOLDER/
+  rm -rf "{$FOLDER:?}/"
 }
 
 rpmverification=false
@@ -27,65 +27,64 @@ inclDialplan=false
 hw-info(){
   echodelim "Hardware"
   vecho "Identifying appliance..."
-  appliance_identify.sh 2>&1>$APPLIANCE/appliance_identify.txt
-  appliance_info.sh check_cards 2>&1>$APPLIANCE/appliance_cards.txt
-
+  appliance_identify.sh &>$APPLIANCE/appliance_identify.txt
+  appliance_info.sh check_cards &>$APPLIANCE/appliance_cards.txt
   vecho "Checking devices"
 
   # ToDo Merge files
-  lspci 2>&1>$APPLIANCE/pci.txt
-  lspci -t 2>&1>>$APPLIANCE/pci.txt
+  lspci &>$APPLIANCE/pci.txt
+  lspci -t &>>$APPLIANCE/pci.txt
 
-  lsusb 2>&1>$APPLIANCE/usb.txt && lsusb -t 2>&1>>$APPLIANCE/usb.txt
+  lsusb &>$APPLIANCE/usb.txt && lsusb -t &>>$APPLIANCE/usb.txt
 
   vecho "Checking free space"
-  lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE 2>&1>$APPLIANCE/lsblk.txt
-  df -h 2>&1>$APPLIANCE/df.txt
-  free 2>&1>$APPLIANCE/free.txt
-
+  lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE &>$APPLIANCE/lsblk.txt
+  df -h &>$APPLIANCE/df.txt
+  free &>$APPLIANCE/free.txt
 }
 
 os-details(){
   echodelim "OS"
   vecho Dumping processlist...
-  uptime 2>&1>$OS/proc.txt
-  ps aux 2>&1>>$OS/proc.txt
+  uptime &>$OS/proc.txt
+  ps aux &>>$OS/proc.txt
 }
 
 nw-details(){
   echodelim "Network"
   vecho "Gathering networking informations..."
-  lsof -i 2>&1>$NET/lsof-i.txt
-  netstat -tulpen 2>&1>$NET/netstat-tulpen.txt
-  netstat -an 2>&1>$NET/netstat-an.txt
-  ifconfig 2>&1>$NET/ifconfig.txt
-  zip -qr $NET/nw-scripts.zip /etc/sysconfig/network-scripts/
-  iptables-save 2>&1>$NET/iptables-current.txt
-  route -n 2>&1>$NET/routes.txt
+  lsof -i &>$NET/lsof-i.txt
+  netstat -tulpen &>$NET/netstat-tulpen.txt
+  netstat -an &>$NET/netstat-an.txt
+  ifconfig &>$NET/ifconfig.txt
+  nice -15 zip -qr $NET/nw-scripts.zip /etc/sysconfig/network-scripts/
+  iptables-save &>$NET/iptables-current.txt
+  iptables -nvL >$NET/iptables-counters.txt
+  route -n &>$NET/routes.txt
 
   vecho "Checking STARFACE HQ avaibility..."
-  curl -sk https://license.starface.de 2>&1> $NET/https-license.txt
-  curl -s http://starface.de/ip.php 2>&1> $NET/https-license.txt
+  curl -sk https://license.starface.de &> $NET/https-license.txt
+  curl -s http://starface.de/ip.php &> $NET/https-license.txt
 }
 
 ast-details(){
   echodelim "Asterisk"
   vecho "Enum Asterisk modules"
-  asterisk -rx 'module show' 2>&1>$AST/modules.txt
+  asterisk -rx 'module show' &>$AST/modules.txt
 
   vecho "Enumerate sip peers-, registry- and channelstate"
-  asterisk -rx 'sip show peers' 2>&1>$AST/peers.txt
-  asterisk -rx 'sip show registry' 2>&1>$AST/registry.txt
-  asterisk -rx 'sip show channels' 2>&1>$AST/sip_channels.txt
+  asterisk -rx 'sip show peers' &>$AST/peers.txt
+  asterisk -rx 'sip show registry' &>$AST/registry.txt
+  asterisk -rx 'sip show channels' &>$AST/sip_channels.txt
 
   vecho "Retrieving core information"
-  asterisk -rx 'core show channels' 2>&1>$AST/core_channels.txt
-  asterisk -rx 'core show threads' 2>&1>$AST/core_threads.txt
-  asterisk -rx 'core show taskprocessors' 2>&1>$AST/core_taskprocessors.txt
+  asterisk -rx 'core show channels' &>$AST/core_channels.txt
+  asterisk -rx 'core show threads' &>$AST/core_threads.txt
+  asterisk -rx 'core show taskprocessors' &>$AST/core_taskprocessors.txt
 
   vecho "Retrieving ISDN configurations and alarms.."
-  asterisk -rx 'pri show spans' 2>&1>$AST/pri_spans.txt
-  asterisk -rx 'srx show layers' 2>&1>$AST/srx_layers.txt
+  asterisk -rx 'pri show spans' &>$AST/pri_spans.txt
+  asterisk -rx 'srx show layers' &>$AST/srx_layers.txt
 }
 
 java-details(){
@@ -94,12 +93,12 @@ java-details(){
   if [ ! -z "$_javaPID" ]; then
     if [[ "$javadump" = true ]]; then
       vecho "Whats in the jStack?"
-      jstack -l $_javaPID 2>&1>$FOLDER/jstack.txt
+      jstack -l $_javaPID &>$FOLDER/jstack.txt
       vecho "Creating Javadump"
-      jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
+      nice -n -5 jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
     fi
     vecho "Getting heap summary"
-    jmap -heap $_javaPID 2>&1>$FOLDER/heap.txt
+    jmap -heap $_javaPID &>$FOLDER/heap.txt
   else
     vecho "No Java PID found. Skipping..."
   fi
@@ -109,20 +108,20 @@ config-dump(){
   echodelim "Configuration"
   vecho "Getting general settings..."
   vecho "setup-Table"
-  psql asterisk -c 'SELECT * FROM setup WHERE "key" !~* '\''(pass?.)|(secret)|(auth)|(dropbox)'\'';' 2>&1>$FOLDER/db-setup.txt
+  psql asterisk -c 'SELECT * FROM setup WHERE "key" !~* '\''(pass?.)|(secret)|(auth)|(dropbox)'\'';' &>$FOLDER/db-setup.txt
   vecho "configgeneral-Table"
-  psql asterisk -c 'SELECT * FROM configgeneral;' 2>&1>$FOLDER/db-configgeneral.txt
+  psql asterisk -c 'SELECT * FROM configgeneral;' &>$FOLDER/db-configgeneral.txt
   vecho "Numberblocks"
-  psql asterisk -c 'SELECT n.*, l.wirename FROM numberblocks n, lineconfiguration l WHERE l.id = n.lid;' 2>&1>$FOLDER/db-numberblocks.txt
+  psql asterisk -c 'SELECT n.*, l.wirename FROM numberblocks n, lineconfiguration l WHERE l.id = n.lid;' &>$FOLDER/db-numberblocks.txt
 }
 
 rpm-details(){
   echodelim "RPM"
   echo Enumerating RPMs
-  rpm -qa 2>&1>$FOLDER/rpm_qa.txt
+  rpm -qa &>$FOLDER/rpm_qa.txt
   if [[ "$rpmverification" = true ]]; then
     echo Verifying RPMs, this will take some time. Skip with CTRL + C
-    rpm -Va 2>&1>$FOLDER/rpm_va.txt
+    nice -10 rpm -Va &>$FOLDER/rpm_va.txt
   fi
 }
 
@@ -151,28 +150,34 @@ showOptionsDialog(){
   esac
 
 	#Set options
-  if [[ ! -z $selection ]]; then
+  if [[ ! -z "$selection" ]]; then
+    echo "Building those Options!"
+    echo "Here's what we got so far: " $selection
     for o in $selection; do
       case $o in
-        "rpmverification" )
+        '"rpmverification"')
           rpmverification=true
           ;;
-        "javadump" )
+        '"javadump"')
           javadump=true
           ;;
-        "verbose" )
+        '"verbose"')
           verbose=true
           ;;
-        "inclDialplan" )
+        '"inclDialplan"')
           inclDialplan=true
           ;;
-        "fsck" )
-	        touch /forcefsck
-	        vecho "Forcing fsck for / on next boot"
+        '"fsck"')
+          touch /forcefsck
+          vecho "Forcing fsck for / on next boot"
+          ;;
+        *)
+          echo "Unkown Parameter: $o"
+          ;;
         esac
     done
   else
-    echo "No options picket. Exiting."
+    echo "No options picked"
 		exit 255
   fi
 
