@@ -1,3 +1,7 @@
+# Obsolete
+
+This script was obsoleted by https://knowledge.starface.de/pages/viewpage.action?pageId=23988412
+
 # How to use this script?
 ## Pre-Flight checklist
 ### Required
