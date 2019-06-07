@@ -255,7 +255,7 @@ printHelp() {
   echo "-h: Help (this screen)"
 }
 
-if [[ -z "$@" ]]; then
+if [[ -z "$*" ]]; then
 	# No parameters given, present dialog.
 	showOptionsDialog
 	main
