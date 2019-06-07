@@ -89,18 +89,42 @@ ast-details(){
 
 java-details(){
   echodelim "Java"
-  _javaPID="$(ps aux | awk '/[j]ava -Djavax/ { print $2 }')"
-  if [ ! -z "$_javaPID" ]; then
-    if [[ "$javadump" = true ]]; then
-      vecho "Whats in the jStack?"
-      jstack -l $_javaPID &>$FOLDER/jstack.txt
-      vecho "Creating Javadump"
-      nice -n -5 jmap -dump:live,format=b,file=$FOLDER/heap.bin $(jps | grep 'Bootstrap' | awk '{ print $1}')
-    fi
-    vecho "Getting heap summary"
-    jmap -heap $_javaPID &>$FOLDER/heap.txt
+
+  # Determine STARFACE Version
+  if [[ -s "/var/starface/fs-interface/version" ]]; then
+    release="$(cat /var/starface/fs-interface/version)"
   else
-    vecho "No Java PID found. Skipping..."
+    release="$(rpm -q --queryformat '%{VERSION}' starface-pbx | tr -d .)"
+  fi
+
+  vecho "This is STARFACE v$release"
+
+  if test "$(echo -e "6.4.3.0\n$release" | sort -V | head -n 1)" != "$release"; then
+    # Tomcat has its own service user
+   
+    userid=$(id -u tomcat)
+    pid=$(pgrep -U "$userid" java)
+
+    chmod -R o+rwx "$FOLDER"
+    
+    vecho "Creating threaddump of $pid"
+    sudo -u tomcat jstack -l "$pid" > "$FOLDER/jstack.$pid.$(date +%F_%R:%S)"
+
+    if [[ "$javadump" = true ]]; then
+      vecho "Creating heapdumps of $pid"
+      sudo -u tomcat jmap -dump:live,format=b,file="$FOLDER/live.bin.$pid" "$pid"
+      sudo -u tomcat jmap -dump:format=b,file="$FOLDER/memory_dead.bin.$pid" "$pid"
+    fi
+  else
+    pid="$(ps aux | awk '/[j]ava -Djavax/ { print $2 }')"
+    vecho "Creating threaddump of $pid"
+    jstack -l "$pid" &>"$FOLDER/jstack.$pid"
+
+    if [[ "$javadump" = true ]]; then
+      vecho "Creating heapdumps of $pid"
+      jmap -dump:live,format=b,file="$FOLDER/live.bin.$pid" "$pid"
+      jmap -dump:format=b,file="$FOLDER/memory_dead.bin.$pid" "$pid"
+    fi
   fi
 }
 
