@@ -108,6 +108,9 @@ java-details(){
     chmod -R o+rwx "$FOLDER"
     
     vecho "Creating threaddump of $pid"
+    
+    # Disable "sudo doesn't affect redirects.", as the redirect has more privileges than the command executed.
+    # shellcheck disable=SC2024
     sudo -u tomcat jstack -l "$pid" > "$FOLDER/jstack.$pid.$(date +%F_%R:%S)"
 
     if [[ "$javadump" = true ]]; then
