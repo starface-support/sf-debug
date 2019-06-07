@@ -1,6 +1,6 @@
 # sf-debug
 
-![Maintenance](https://img.shields.io/maintenance/yes/2019.svg) ![GitHub](https://img.shields.io/github/license/sf-janz/sf-debug.svg) ![GitHub file size in bytes](https://img.shields.io/github/size/sf-janz/sf-debug/debug.sh.svg) ![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0--6.6.0.20-f59c00.svg)
+![Maintenance](https://img.shields.io/maintenance/yes/2019.svg) ![GitHub](https://img.shields.io/github/license/sf-janz/sf-debug.svg) ![GitHub file size in bytes](https://img.shields.io/github/size/sf-janz/sf-debug/debug.sh.svg) ![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.6.0.20-f59c00.svg)
 
 ## How to use this script?
 
