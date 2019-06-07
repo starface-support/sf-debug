@@ -8,10 +8,10 @@ finish() {
 		exit 1
   elif [[ $inclDialplan = true ]]; then
     vecho "Finishing up, zipping $FOLDER, /var/log and /etc/asterisk to $ARCHIVE"
-    nice -15 ionice -c 2 -n 5 zip -qr $ARCHIVE /etc/asterisk /var/log $FOLDER/
+    nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /etc/asterisk /var/log "$FOLDER/"
   else
     vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
-    nice -15 ionice -c 2 -n 5 zip -qr $ARCHIVE /var/log $FOLDER/
+    nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /var/log "$FOLDER/"
   fi
 
   vecho "Deleting $FOLDER"
@@ -27,64 +27,64 @@ inclDialplan=false
 hw-info(){
   echodelim "Hardware"
   vecho "Identifying appliance..."
-  appliance_identify.sh &>$APPLIANCE/appliance_identify.txt
-  appliance_info.sh check_cards &>$APPLIANCE/appliance_cards.txt
+  appliance_identify.sh &>"$APPLIANCE/appliance_identify.txt"
+  appliance_info.sh check_cards &>"$APPLIANCE/appliance_cards.txt"
   vecho "Checking devices"
 
   # ToDo Merge files
-  lspci &>$APPLIANCE/pci.txt
-  lspci -t &>>$APPLIANCE/pci.txt
+  lspci "&>$APPLIANCE/pci.txt"
+  lspci -t "&>>$APPLIANCE/pci.txt"
 
-  lsusb &>$APPLIANCE/usb.txt && lsusb -t &>>$APPLIANCE/usb.txt
+  lsusb &>"$APPLIANCE/usb.txt" && lsusb -t &>>"$APPLIANCE/usb.txt"
 
   vecho "Checking free space"
-  lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE &>$APPLIANCE/lsblk.txt
-  df -h &>$APPLIANCE/df.txt
-  free &>$APPLIANCE/free.txt
+  lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE &>"$APPLIANCE/lsblk.txt"
+  df -h &>"$APPLIANCE/df.txt"
+  free &>"$APPLIANCE/free.txt"
 }
 
 os-details(){
   echodelim "OS"
   vecho Dumping processlist...
-  uptime &>$OS/proc.txt
-  ps aux &>>$OS/proc.txt
+  uptime &>"$OS/proc.txt"
+  ps aux &>>"$OS/proc.txt"
 }
 
 nw-details(){
   echodelim "Network"
   vecho "Gathering networking informations..."
-  lsof -i &>$NET/lsof-i.txt
-  netstat -tulpen &>$NET/netstat-tulpen.txt
-  netstat -an &>$NET/netstat-an.txt
-  ifconfig &>$NET/ifconfig.txt
-  nice -15 zip -qr $NET/nw-scripts.zip /etc/sysconfig/network-scripts/
-  iptables-save &>$NET/iptables-current.txt
-  iptables -nvL >$NET/iptables-counters.txt
-  route -n &>$NET/routes.txt
+  lsof -i &>"$NET/lsof-i.txt"
+  netstat -tulpen &>"$NET/netstat-tulpen.txt"
+  netstat -an &>"$NET/netstat-an.txt"
+  ifconfig &>"$NET/ifconfig.txt"
+  nice -15 zip -qr "$NET/nw-scripts.zip /etc/sysconfig/network-scripts/"
+  iptables-save &>"$NET/iptables-current.txt"
+  iptables -nvL >"$NET/iptables-counters.txt"
+  route -n &>"$NET/routes.txt"
 
   vecho "Checking STARFACE HQ avaibility..."
-  curl -sk https://license.starface.de &> $NET/https-license.txt
-  curl -s http://starface.de/ip.php &> $NET/https-license.txt
+  curl -sik https://license.starface.de &> "$NET/https-license.txt"
+  curl -s http://starface.de/ip.php &>> "$NET/https-license.txt"
 }
 
 ast-details(){
   echodelim "Asterisk"
   vecho "Enum Asterisk modules"
-  asterisk -rx 'module show' &>$AST/modules.txt
+  asterisk -rx 'module show' &>"$AST/modules.txt"
 
   vecho "Enumerate sip peers-, registry- and channelstate"
-  asterisk -rx 'sip show peers' &>$AST/peers.txt
-  asterisk -rx 'sip show registry' &>$AST/registry.txt
-  asterisk -rx 'sip show channels' &>$AST/sip_channels.txt
+  asterisk -rx 'sip show peers' &>"$AST/peers.txt"
+  asterisk -rx 'sip show registry' &>"$AST/registry.txt"
+  asterisk -rx 'sip show channels' &>"$AST/sip_channels.txt"
 
   vecho "Retrieving core information"
-  asterisk -rx 'core show channels' &>$AST/core_channels.txt
-  asterisk -rx 'core show threads' &>$AST/core_threads.txt
-  asterisk -rx 'core show taskprocessors' &>$AST/core_taskprocessors.txt
+  asterisk -rx 'core show channels' &>"$AST/core_channels.txt"
+  asterisk -rx 'core show threads' &>"$AST/core_threads.txt"
+  asterisk -rx 'core show taskprocessors' &>"$AST/core_taskprocessors.txt"
 
   vecho "Retrieving ISDN configurations and alarms.."
-  asterisk -rx 'pri show spans' &>$AST/pri_spans.txt
-  asterisk -rx 'srx show layers' &>$AST/srx_layers.txt
+  asterisk -rx 'pri show spans' &>"$AST/pri_spans.txt"
+  asterisk -rx 'srx show layers' &>$"AST/srx_layers.txt"
 }
 
 java-details(){
@@ -132,20 +132,20 @@ config-dump(){
   echodelim "Configuration"
   vecho "Getting general settings..."
   vecho "setup-Table"
-  psql asterisk -c 'SELECT * FROM setup WHERE "key" !~* '\''(pass?.)|(secret)|(auth)|(dropbox)'\'';' &>$FOLDER/db-setup.txt
+  psql asterisk -c 'SELECT * FROM setup WHERE "key" !~* '\''(pass?.)|(secret)|(auth)|(dropbox)'\'';' &>"$FOLDER/db-setup.txt"
   vecho "configgeneral-Table"
-  psql asterisk -c 'SELECT * FROM configgeneral;' &>$FOLDER/db-configgeneral.txt
+  psql asterisk -c 'SELECT * FROM configgeneral;' &>"$FOLDER/db-configgeneral.txt"
   vecho "Numberblocks"
-  psql asterisk -c 'SELECT n.*, l.wirename FROM numberblocks n, lineconfiguration l WHERE l.id = n.lid;' &>$FOLDER/db-numberblocks.txt
+  psql asterisk -c 'SELECT n.*, l.wirename FROM numberblocks n, lineconfiguration l WHERE l.id = n.lid;' &>"$FOLDER/db-numberblocks.txt"
 }
 
 rpm-details(){
   echodelim "RPM"
   echo Enumerating RPMs
-  rpm -qa &>$FOLDER/rpm_qa.txt
+  rpm -qa &>"$FOLDER/rpm_qa.txt"
   if [[ "$rpmverification" = true ]]; then
     echo Verifying RPMs, this will take some time. Skip with CTRL + C
-    nice -10 rpm -Va &>$FOLDER/rpm_va.txt
+    nice -10 rpm -Va &>"$FOLDER/rpm_va.txt"
   fi
 }
 
@@ -174,9 +174,9 @@ showOptionsDialog(){
   esac
 
 	#Set options
-  if [[ ! -z "$selection" ]]; then
+  if [[ -n "$selection" ]]; then
     echo "Building those Options!"
-    echo "Here's what we got so far: " $selection
+    echo "Here's what we got so far: $selection"
     for o in $selection; do
       case $o in
         '"rpmverification"')
@@ -211,14 +211,14 @@ showOptionsDialog(){
 # Stdout the start of a new function
 echodelim() {
   if [[ $quiet = false ]]; then
-    echo "========= " $1 " ========="
+    echo "=========  $1  ========="
   fi
 }
 
 # Verbose output on stdout
 vecho() {
   if [[ $verbose = true ]] && [[ $quiet = false ]]; then
-    echo $1
+    echo "$1"
   fi
 }
 
@@ -229,7 +229,7 @@ main() {
   OS="$APPLIANCE/os"
   NET="$OS/net"
 
-  mkdir $AST $APPLIANCE $OS $NET
+  mkdir "$AST" "$APPLIANCE" "$OS" "$NET"
 
   # We have created folders,
   # don't exit the script without cleaning up.
