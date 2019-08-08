@@ -32,10 +32,11 @@ hw-info(){
   vecho "Checking devices"
 
   # ToDo Merge files
-  lspci "&>$APPLIANCE/pci.txt"
-  lspci -t "&>>$APPLIANCE/pci.txt"
+  lspci &>"$APPLIANCE/pci.txt"
+  lspci -t &>>"$APPLIANCE/pci.txt"
 
-  lsusb &>"$APPLIANCE/usb.txt" && lsusb -t &>>"$APPLIANCE/usb.txt"
+  lsusb &>"$APPLIANCE/usb.txt" &&\
+   lsusb -t &>>"$APPLIANCE/usb.txt"
 
   vecho "Checking free space"
   lsblk -oNAME,FSTYPE,MOUNTPOINT,TYPE,SIZE &>"$APPLIANCE/lsblk.txt"
@@ -54,13 +55,13 @@ nw-details(){
   echodelim "Network"
   vecho "Gathering networking informations..."
   lsof -i &>"$NET/lsof-i.txt"
-  netstat -tulpen &>"$NET/netstat-tulpen.txt"
-  netstat -an &>"$NET/netstat-an.txt"
-  ifconfig &>"$NET/ifconfig.txt"
-  nice -15 zip -qr "$NET/nw-scripts.zip /etc/sysconfig/network-scripts/"
+  ss -tulpen &>"$NET/netstat-tulpen.txt"
+  ss -an &>"$NET/netstat-an.txt"
+  ip -a &>"$NET/ifconfig.txt"
+  nice -15 zip -qr "$NET/nw-scripts.zip" "/etc/sysconfig/network-scripts/"
   iptables-save &>"$NET/iptables-current.txt"
   iptables -nvL >"$NET/iptables-counters.txt"
-  route -n &>"$NET/routes.txt"
+  ip r &>"$NET/routes.txt"
 
   vecho "Checking STARFACE HQ avaibility..."
   curl -sik https://license.starface.de &> "$NET/https-license.txt"
@@ -84,7 +85,7 @@ ast-details(){
 
   vecho "Retrieving ISDN configurations and alarms.."
   asterisk -rx 'pri show spans' &>"$AST/pri_spans.txt"
-  asterisk -rx 'srx show layers' &>$"AST/srx_layers.txt"
+  asterisk -rx 'srx show layers' &>"$AST/srx_layers.txt"
 }
 
 java-details(){
