@@ -102,7 +102,6 @@ java-details(){
 
   if test "$(echo -e "6.4.3.0\n$release" | sort -V | head -n 1)" != "$release"; then
     # Tomcat has its own service user
-   
     userid=$(id -u tomcat)
     pid=$(pgrep -U "$userid" java)
 
@@ -155,7 +154,7 @@ rpm-details(){
 
 showOptionsDialog(){
   exec 3>&1
-  selection=$(dialog --checklist "package timing" 20 75 5 \
+  selection=$(dialog --checklist "Select options" 20 75 5 \
             "rpmverification" "Verify RPM packets (might take 5 - 20 minutes)" on \
             "inclDialplan" "Include asterisk and dahdi config"  on  \
             "javadump" "Java memorydump (Will result in a large Archive)" off \
