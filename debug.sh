@@ -158,18 +158,33 @@ rpm-details(){
   fi
 }
 
+# TODO This entire method needs more robustness against wrong or malicious input
 upload-nc(){
   echodelim "Nextcloud Upload"
+  
   if [[ -z "$uploadURI" ]]; then
-    # No URI given.
-    # TODO: Present a dialog and retrieve the URI
-    uploadURI="https://files.starface.de/index.php/s/A5Y7eja9F6sHn66"
+    vecho "No URI, opening dialog"
+    exec 3>&1
+    uploadURI=$(dialog --inputbox "STARFACE Support upload URI (files.starface.de):" 20 75 2>&1 1>&3)
+    exit_status=$?
+    exec 3>&-
+    case $exit_status in
+    $DIALOG_CANCEL)
+      echo "Canceled URI input"
+      return
+      ;;
+    esac
+
+    if [[ -n "$uploadURI" ]]; then
+      echo "URI input was empty, cancelling upload attempt."
+    fi 
   fi
+
   vecho "uploadURI=$uploadURI"
 
-  # TODO There has to be a better way than using echo...
+  # TODO There has to be a better way than using `echo | awk`...
+  # shellcheck disable=SC2086
   nextcloudShare=$(echo $uploadURI | awk 'match($0, "[^/]*$") { print substr( $0, RSTART, RLENGTH) }')
-  vecho "nextcloudShare=$nextcloudShare"
 
   curl -k -T "$1" -u "$nextcloudShare:" https://files.starface.de/public.php/webdav/
 }
@@ -201,8 +216,8 @@ showOptionsDialog(){
 
 	#Set options
   if [[ -n "$selection" ]]; then
-    echo "Building those Options!"
-    echo "Here's what we got so far: $selection"
+    vecho "Building those Options!"
+    vecho "Here's what we got so far: $selection"
     for o in $selection; do
       case $o in
         '"rpmverification"')
@@ -280,7 +295,7 @@ printHelp() {
   echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
   echo "-a: Dont include /etc/asterisk"
   echo "-fs: Force fsck for the root partition on the next boot"
-  echo "-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)"
+  echo "-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)" # TODO this needs an extra parameter for the URI
   echo "-h: Help (this screen)"
 }
 
