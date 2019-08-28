@@ -34,13 +34,14 @@ within the shell (SSH).
 You can change the behaviour of the script, depending on which Paramters you pass along:
 
 ```text
-debug.sh [-v|q] [-j] [-r] [-a] [-h]
+debug.sh [-v|q] [-j] [-r] [-a] [-u] [-h]
 -v: Verbose output (inner function calls)
 -q: Minimum output (quiet)
 -j: Create Java memorydump
 -r: Dont verify RPMs, may save a lot of time if unnecessary
 -a: Dont include /etc/asterisk
 -fs: Force fsck for the root partition on the next boot
+-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)
 -h: Help (this screen)
 ```
 
@@ -52,5 +53,5 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h]
 `./debug.sh -r -a`
 - You don't want to include the passwords of the SIP accounts:\
 `./debug.sh -a`
-- Upload the logs to STARFACE:
+- Upload the logs to STARFACE Nextcloud share:
 `./debug.sh -u`
