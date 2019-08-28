@@ -161,6 +161,7 @@ rpm-details(){
 upload-nc(){
   echodelim "Nextcloud Upload"
   if [[ -z "$uploadURI" ]]; then
+    # No URI given.
     # TODO: Present a dialog and retrieve the URI
     uploadURI="https://files.starface.de/index.php/s/A5Y7eja9F6sHn66"
   fi
@@ -170,12 +171,12 @@ upload-nc(){
   nextcloudShare=$(echo $uploadURI | awk 'match($0, "[^/]*$") { print substr( $0, RSTART, RLENGTH) }')
   vecho "nextcloudShare=$nextcloudShare"
 
-  curl -ki -T  -u "A5Y7eja9F6sHn66:" https://files.starface.de/public.php/webdav/
+  curl -k -T "$1" -u "$nextcloudShare:" https://files.starface.de/public.php/webdav/
 }
 
 showOptionsDialog(){
   exec 3>&1
-  selection=$(dialog --checklist "Select options" 20 75 5 \
+  selection=$(dialog --checklist "Select options" 20 75 6 \
             "rpmverification" "Verify RPM packets (might take 5 - 20 minutes)" on \
             "inclDialplan" "Include asterisk and dahdi config"  on  \
             "javadump" "Java memorydump (Will result in a large Archive)" off \
@@ -259,8 +260,7 @@ main() {
 
   mkdir "$AST" "$APPLIANCE" "$OS" "$NET"
 
-  # We have created folders,
-  # don't exit the script without cleaning up.
+  # We have created folders, don't exit the script without cleaning up.
   trap finish EXIT
 
   hw-info
@@ -270,7 +270,6 @@ main() {
   config-dump
   java-details
   rpm-details
-  upload-nc
 }
 
 printHelp() {
@@ -281,6 +280,7 @@ printHelp() {
   echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
   echo "-a: Dont include /etc/asterisk"
   echo "-fs: Force fsck for the root partition on the next boot"
+  echo "-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)"
   echo "-h: Help (this screen)"
 }
 
@@ -314,6 +314,9 @@ else
 	      -fs)
 	      touch /forcefsck
 	      vecho "Forcing fsck for / on next boot"
+        ;;
+        -u)
+        uploadNextcloud=true
 	      ;;
 	      *)
 	      ;;
