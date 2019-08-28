@@ -14,6 +14,10 @@ finish() {
     nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /var/log "$FOLDER/"
   fi
 
+  if [[ $uploadNextcloud ]]; then
+    upload-nc "$ARCHIVE"
+  fi
+
   vecho "Deleting $FOLDER"
   rm -rf "{$FOLDER:?}/"
 }
@@ -23,6 +27,8 @@ javadump=false
 verbose=false
 quiet=false
 inclDialplan=false
+uploadNextcloud=false
+uploadURI=
 
 hw-info(){
   echodelim "Hardware"
@@ -152,6 +158,21 @@ rpm-details(){
   fi
 }
 
+upload-nc(){
+  echodelim "Nextcloud Upload"
+  if [[ -z "$uploadURI" ]]; then
+    # TODO: Present a dialog and retrieve the URI
+    uploadURI="https://files.starface.de/index.php/s/A5Y7eja9F6sHn66"
+  fi
+  vecho "uploadURI=$uploadURI"
+
+  # TODO There has to be a better way than using echo...
+  nextcloudShare=$(echo $uploadURI | awk 'match($0, "[^/]*$") { print substr( $0, RSTART, RLENGTH) }')
+  vecho "nextcloudShare=$nextcloudShare"
+
+  curl -ki -T  -u "A5Y7eja9F6sHn66:" https://files.starface.de/public.php/webdav/
+}
+
 showOptionsDialog(){
   exec 3>&1
   selection=$(dialog --checklist "Select options" 20 75 5 \
@@ -160,6 +181,7 @@ showOptionsDialog(){
             "javadump" "Java memorydump (Will result in a large Archive)" off \
             "verbose" "Display progress (Verbose)" on \
             "fsck" "Force filesystemcheck on next reboot" off \
+            "nextcloud" "Upload the archive to a Nextcloud share?" off \
             2>&1 1>&3)
   exit_status=$?
   exec 3>&-
@@ -197,6 +219,9 @@ showOptionsDialog(){
         '"fsck"')
           touch /forcefsck
           vecho "Forcing fsck for / on next boot"
+          ;;
+        '"nextcloud"')
+          uploadNextcloud=true
           ;;
         *)
           echo "Unkown Parameter: $o"
@@ -245,6 +270,7 @@ main() {
   config-dump
   java-details
   rpm-details
+  upload-nc
 }
 
 printHelp() {
