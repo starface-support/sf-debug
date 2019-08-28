@@ -1,7 +1,7 @@
 # sf-debug
 
-![Maintenance](https://img.shields.io/maintenance/yes/2019.svg) ![GitHub](https://img.shields.io/github/license/sf-janz/sf-debug.svg) ![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.6.0.20-f59c00.svg)\
- ![CircleCI](https://img.shields.io/circleci/build/gh/sf-janz/sf-debug/master.svg) ![GitHub file size in bytes](https://img.shields.io/github/size/sf-janz/sf-debug/debug.sh.svg)
+![Maintenance](https://img.shields.io/maintenance/yes/2019.svg) ![GitHub](https://img.shields.io/github/license/starface-support/sf-debug.svg) ![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.7.0.x-f59c00.svg)\
+ ![CircleCI](https://img.shields.io/circleci/build/gh/starface-support/sf-debug/master.svg) ![GitHub file size in bytes](https://img.shields.io/github/size/starface-support/sf-debug/debug.sh.svg)
 
 ## How to use this script?
 
@@ -52,3 +52,5 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h]
 `./debug.sh -r -a`
 - You don't want to include the passwords of the SIP accounts:\
 `./debug.sh -a`
+- Upload the logs to STARFACE:
+`./debug.sh -u`

@@ -14,6 +14,10 @@ finish() {
     nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /var/log "$FOLDER/"
   fi
 
+  if [[ $uploadNextcloud ]]; then
+    upload-nc "$ARCHIVE"
+  fi
+
   vecho "Deleting $FOLDER"
   rm -rf "{$FOLDER:?}/"
 }
@@ -23,6 +27,8 @@ javadump=false
 verbose=false
 quiet=false
 inclDialplan=false
+uploadNextcloud=false
+uploadURI=
 
 hw-info(){
   echodelim "Hardware"
@@ -152,14 +158,46 @@ rpm-details(){
   fi
 }
 
+# TODO This entire method needs more robustness against wrong or malicious input
+upload-nc(){
+  echodelim "Nextcloud Upload"
+  
+  if [[ -z "$uploadURI" ]]; then
+    vecho "No URI, opening dialog"
+    exec 3>&1
+    uploadURI=$(dialog --inputbox "STARFACE Support upload URI (files.starface.de):" 20 75 2>&1 1>&3)
+    exit_status=$?
+    exec 3>&-
+    case $exit_status in
+    $DIALOG_CANCEL)
+      echo "Canceled URI input"
+      return
+      ;;
+    esac
+
+    if [[ -n "$uploadURI" ]]; then
+      echo "URI input was empty, cancelling upload attempt."
+    fi 
+  fi
+
+  vecho "uploadURI=$uploadURI"
+
+  # TODO There has to be a better way than using `echo | awk`...
+  # shellcheck disable=SC2086
+  nextcloudShare=$(echo $uploadURI | awk 'match($0, "[^/]*$") { print substr( $0, RSTART, RLENGTH) }')
+
+  curl -k -T "$1" -u "$nextcloudShare:" https://files.starface.de/public.php/webdav/
+}
+
 showOptionsDialog(){
   exec 3>&1
-  selection=$(dialog --checklist "Select options" 20 75 5 \
+  selection=$(dialog --checklist "Select options" 20 75 6 \
             "rpmverification" "Verify RPM packets (might take 5 - 20 minutes)" on \
             "inclDialplan" "Include asterisk and dahdi config"  on  \
             "javadump" "Java memorydump (Will result in a large Archive)" off \
             "verbose" "Display progress (Verbose)" on \
             "fsck" "Force filesystemcheck on next reboot" off \
+            "nextcloud" "Upload the archive to a Nextcloud share?" off \
             2>&1 1>&3)
   exit_status=$?
   exec 3>&-
@@ -178,8 +216,8 @@ showOptionsDialog(){
 
 	#Set options
   if [[ -n "$selection" ]]; then
-    echo "Building those Options!"
-    echo "Here's what we got so far: $selection"
+    vecho "Building those Options!"
+    vecho "Here's what we got so far: $selection"
     for o in $selection; do
       case $o in
         '"rpmverification"')
@@ -197,6 +235,9 @@ showOptionsDialog(){
         '"fsck"')
           touch /forcefsck
           vecho "Forcing fsck for / on next boot"
+          ;;
+        '"nextcloud"')
+          uploadNextcloud=true
           ;;
         *)
           echo "Unkown Parameter: $o"
@@ -234,8 +275,7 @@ main() {
 
   mkdir "$AST" "$APPLIANCE" "$OS" "$NET"
 
-  # We have created folders,
-  # don't exit the script without cleaning up.
+  # We have created folders, don't exit the script without cleaning up.
   trap finish EXIT
 
   hw-info
@@ -255,6 +295,7 @@ printHelp() {
   echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
   echo "-a: Dont include /etc/asterisk"
   echo "-fs: Force fsck for the root partition on the next boot"
+  echo "-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)" # TODO this needs an extra parameter for the URI
   echo "-h: Help (this screen)"
 }
 
@@ -288,6 +329,9 @@ else
 	      -fs)
 	      touch /forcefsck
 	      vecho "Forcing fsck for / on next boot"
+        ;;
+        -u)
+        uploadNextcloud=true
 	      ;;
 	      *)
 	      ;;
