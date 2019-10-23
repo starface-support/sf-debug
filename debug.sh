@@ -289,7 +289,7 @@ printHelp() {
   echo "-q: Minimum output (quiet)"
   echo "-j: Create Java memorydump"
   echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
-  echo "-a: Dont include /etc/asterisk"
+  echo "-a: Include /etc/asterisk"
   echo "-fs: Force fsck for the root partition on the next boot"
   echo "-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)" # TODO this needs an extra parameter for the URI
   echo "-h: Help (this screen)"
@@ -316,7 +316,7 @@ else
 	      rpmverification=false
 	      ;;
 	      -a)
-	      inclDialplan=false
+	      inclDialplan=true
 	      ;;
 	      -h)
 	      printHelp
