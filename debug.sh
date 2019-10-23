@@ -174,10 +174,6 @@ upload-nc(){
       return
       ;;
     esac
-
-    if [[ -n "$uploadURI" ]]; then
-      echo "URI input was empty, cancelling upload attempt."
-    fi 
   fi
 
   vecho "uploadURI=$uploadURI"
