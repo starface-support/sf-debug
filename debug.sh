@@ -2,21 +2,21 @@
 
 finish() {
   echodelim "Done!"
-  ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
+  _ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
+  _folders="/var/log"
+
   if [[ ! -e $FOLDER ]]; then
     vecho "Tempfolder does not exist, nothing to do."
 		exit 1
-  elif [[ $inclDialplan = true ]]; then
-    vecho "Finishing up, zipping $FOLDER, /var/log and /etc/asterisk to $ARCHIVE"
-    nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /etc/asterisk /var/log "$FOLDER/"
   else
-    vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
-    nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /var/log "$FOLDER/"
+    if [[ "$inclDialplan" = true ]]; then _folders+=" /etc/asterisk"; fi
+    if [[ -e "/var/spool/hylafax/log" ]]; then _folders+=" /var/spool/hylafax/log"; fi
+
+    vecho "Finishing up, zipping $FOLDER and $_folders to $_ARCHIVE"
+    nice -n 15 ionice -c 2 -n 5 zip -qr "$_ARCHIVE" "$_folders" "$FOLDER/"
   fi
 
-  if [[ $uploadNextcloud ]]; then
-    upload-nc "$ARCHIVE"
-  fi
+  if [[ "$uploadNextcloud" = true ]]; then upload-nc "$_ARCHIVE"; fi
 
   vecho "Deleting $FOLDER"
   rm -rf "{$FOLDER:?}/"
