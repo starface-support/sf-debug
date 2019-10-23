@@ -2,21 +2,21 @@
 
 finish() {
   echodelim "Done!"
-  ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
+  _ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
+  _folders="/var/log"
+
   if [[ ! -e $FOLDER ]]; then
     vecho "Tempfolder does not exist, nothing to do."
 		exit 1
-  elif [[ $inclDialplan = true ]]; then
-    vecho "Finishing up, zipping $FOLDER, /var/log and /etc/asterisk to $ARCHIVE"
-    nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /etc/asterisk /var/log "$FOLDER/"
   else
-    vecho "Finishing up, zipping $FOLDER and /var/log to $ARCHIVE"
-    nice -n 15 ionice -c 2 -n 5 zip -qr "$ARCHIVE" /var/log "$FOLDER/"
+    if [[ "$inclDialplan" = true ]]; then _folders+=" /etc/asterisk"; fi
+    if [[ -e "/var/spool/hylafax/log" ]]; then _folders+=" /var/spool/hylafax/log"; fi
+
+    vecho "Finishing up, zipping $FOLDER and $_folders to $_ARCHIVE"
+    nice -n 15 ionice -c 2 -n 5 zip -qr "$_ARCHIVE" "$_folders" "$FOLDER/"
   fi
 
-  if [[ $uploadNextcloud ]]; then
-    upload-nc "$ARCHIVE"
-  fi
+  if [[ "$uploadNextcloud" = true ]]; then upload-nc "$_ARCHIVE"; fi
 
   vecho "Deleting $FOLDER"
   rm -rf "{$FOLDER:?}/"
@@ -174,10 +174,6 @@ upload-nc(){
       return
       ;;
     esac
-
-    if [[ -n "$uploadURI" ]]; then
-      echo "URI input was empty, cancelling upload attempt."
-    fi 
   fi
 
   vecho "uploadURI=$uploadURI"
@@ -293,7 +289,7 @@ printHelp() {
   echo "-q: Minimum output (quiet)"
   echo "-j: Create Java memorydump"
   echo "-r: Dont verify RPMs, may save a lot of time if unnecessary"
-  echo "-a: Dont include /etc/asterisk"
+  echo "-a: Include /etc/asterisk"
   echo "-fs: Force fsck for the root partition on the next boot"
   echo "-u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)" # TODO this needs an extra parameter for the URI
   echo "-h: Help (this screen)"
@@ -320,7 +316,7 @@ else
 	      rpmverification=false
 	      ;;
 	      -a)
-	      inclDialplan=false
+	      inclDialplan=true
 	      ;;
 	      -h)
 	      printHelp
