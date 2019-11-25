@@ -9,11 +9,13 @@ finish() {
     vecho "Tempfolder does not exist, nothing to do."
 		exit 1
   else
-    if [[ "$inclDialplan" = true ]]; then _folders+=" /etc/asterisk"; fi
-    if [[ -e "/var/spool/hylafax/log" ]]; then _folders+=" /var/spool/hylafax/log"; fi
+    if [[ -e "/var/spool/hylafax/log/" ]]; then _folders+=" /var/spool/hylafax/log/"; fi
+    if [[ "$inclDialplan" = true ]]; then _folders+=" /etc/asterisk/ -x etc/asterisk/key*"; fi
 
     vecho "Finishing up, zipping $FOLDER and $_folders to $_ARCHIVE"
-    nice -n 15 ionice -c 2 -n 5 zip -qr "$_ARCHIVE" "$_folders" "$FOLDER/"
+    # Word splitting should absolutely happen here
+    # shellcheck disable=2086
+    nice -n 15 ionice -c 2 -n 5 zip -qr "$_ARCHIVE" $_folders
   fi
 
   if [[ "$uploadNextcloud" = true ]]; then upload-nc "$_ARCHIVE"; fi
@@ -284,7 +286,7 @@ main() {
 }
 
 printHelp() {
-  echo "debug.sh [-v|q] [-j] [-r] [-a] [-h]"
+  echo "debug.sh [-v|q] [-j] [-r] [-a] [-h] [-u]"
   echo "-v: Verbose output (inner function calls)"
   echo "-q: Minimum output (quiet)"
   echo "-j: Create Java memorydump"

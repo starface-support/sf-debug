@@ -9,9 +9,9 @@
 
 #### Required
 
-- [ ] [SSH Access](http://wiki.starface.de/index.php/SSH) to the STARFACE Appliance
-- [ ] [Root password](http://wiki.starface.de/index.php/Root_Passwort). [Lost your root password?](#fn1)
-- [ ] An SSH / sFTP client
+- SSH Access to the STARFACE Appliance
+- [Root password](https://knowledge.starface.de/pages/viewpage.action?pageId=33784144)
+- An SSH / sFTP client
 
 ### Option 1: Download and execute
 
@@ -26,7 +26,7 @@ within the shell (SSH).
 ### Option 2: Execute via cURL
 
 - Execute\
-`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh | /bin/bash`\
+`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh | /bin/bash`
 - Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
 
 ### Parameters
@@ -34,12 +34,12 @@ within the shell (SSH).
 You can change the behaviour of the script, depending on which Paramters you pass along:
 
 ```text
-debug.sh [-v|q] [-j] [-r] [-a] [-u] [-h]
+debug.sh [-v|q] [-j] [-r] [-a] [-h]
 -v: Verbose output (inner function calls)
 -q: Minimum output (quiet)
 -j: Create Java memorydump
 -r: Dont verify RPMs, may save a lot of time if unnecessary
--a: Dont include /etc/asterisk
+-a: Include /etc/asterisk
 -fs: Force fsck for the root partition on the next boot
 -u: Upload the resulting file to a STARFACE Nextcloud share (requries URI from the support)
 -h: Help (this screen)
