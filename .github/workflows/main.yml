@@ -1,0 +1,13 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+       - name: Shell Linter
+         uses: azohra/shell-linter@v0.1.0
+
