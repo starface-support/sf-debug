@@ -286,7 +286,7 @@ main() {
 }
 
 printHelp() {
-  echo "debug.sh [-v|q] [-j] [-r] [-a] [-h]"
+  echo "debug.sh [-v|q] [-j] [-r] [-a] [-h] [-u]"
   echo "-v: Verbose output (inner function calls)"
   echo "-q: Minimum output (quiet)"
   echo "-j: Create Java memorydump"
