@@ -1,4 +1,4 @@
-name: CI
+name: Lint and check
 
 on: [push]
 
@@ -10,4 +10,5 @@ jobs:
     steps:
        - name: Shell Linter
          uses: azohra/shell-linter@v0.1.0
-
+       - name: shellcheck
+         uses: ludeeus/action-shellcheck@0.1.0
