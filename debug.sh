@@ -15,7 +15,7 @@ finish() {
     vecho "Finishing up, zipping $FOLDER and $_folders to $_ARCHIVE"
     # Word splitting should absolutely happen here
     # shellcheck disable=2086
-    nice -n 15 ionice -c 2 -n 5 zip -qr "$_ARCHIVE" $_folders
+    nice -n 15 ionice -c 2 -n 5 zip -qr "$_ARCHIVE" "$FOLDER/" $_folders
   fi
 
   if [[ "$uploadNextcloud" = true ]]; then upload-nc "$_ARCHIVE"; fi
