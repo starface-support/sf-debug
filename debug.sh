@@ -10,6 +10,7 @@ finish() {
 		exit 1
   else
     if [[ -e "/var/spool/hylafax/log/" ]]; then _folders+=" /var/spool/hylafax/log/"; fi
+    if [[ -e "/var/coredumps/" ]]; then _folders+=" /var/coredumps/"; fi
     if [[ "$inclDialplan" = true ]]; then _folders+=" /etc/asterisk/ -x etc/asterisk/key*"; fi
 
     vecho "Finishing up, zipping $FOLDER and $_folders to $_ARCHIVE"
@@ -22,6 +23,8 @@ finish() {
 
   vecho "Deleting $FOLDER"
   rm -rf "{$FOLDER:?}/"
+
+  if [[ -e "$_ARCHIVE" ]]; then echo "Your debug archive is ready at: $_ARCHIVE"; fi
 }
 
 rpmverification=false
@@ -162,8 +165,6 @@ rpm-details(){
 
 # TODO This entire method needs more robustness against wrong or malicious input
 upload-nc(){
-  echodelim "Nextcloud Upload"
-  
   if [[ -z "$uploadURI" ]]; then
     vecho "No URI, opening dialog"
     exec 3>&1
@@ -178,13 +179,15 @@ upload-nc(){
     esac
   fi
 
+  clear
+  echodelim "Uploading to Nextcloud"
   vecho "uploadURI=$uploadURI"
 
   # TODO There has to be a better way than using `echo | awk`...
   # shellcheck disable=SC2086
   nextcloudShare=$(echo $uploadURI | awk 'match($0, "[^/]*$") { print substr( $0, RSTART, RLENGTH) }')
 
-  curl -k -T "$1" -u "$nextcloudShare:" https://files.starface.de/public.php/webdav/
+  curl --progress-bar -k -T "$1" -u "$nextcloudShare:" "https://files.starface.de/public.php/webdav/" >/dev/null
 }
 
 showOptionsDialog(){

@@ -1,7 +1,8 @@
 # sf-debug
 
-![Maintenance](https://img.shields.io/maintenance/yes/2019.svg) ![GitHub](https://img.shields.io/github/license/starface-support/sf-debug.svg) ![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.7.0.x-f59c00.svg)\
- ![CircleCI](https://img.shields.io/circleci/build/gh/starface-support/sf-debug/master.svg) ![GitHub file size in bytes](https://img.shields.io/github/size/starface-support/sf-debug/debug.sh.svg)
+![Maintenance](https://img.shields.io/maintenance/yes/2019.svg)![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.7.0.x-f59c00.svg)\
+![GitHub](https://img.shields.io/github/license/starface-support/sf-debug.svg) 
+ ![GitHub file size in bytes](https://img.shields.io/github/size/starface-support/sf-debug/debug.sh.svg) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/starface-support/sf-debug/shellcheck?label=shellcheck)
 
 ## How to use this script?
 
@@ -34,7 +35,7 @@ within the shell (SSH).
 You can change the behaviour of the script, depending on which Paramters you pass along:
 
 ```text
-debug.sh [-v|q] [-j] [-r] [-a] [-h]
+debug.sh [-v|q] [-j] [-r] [-a] [-h] [-u]
 -v: Verbose output (inner function calls)
 -q: Minimum output (quiet)
 -j: Create Java memorydump
