@@ -2,7 +2,7 @@
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg)![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.7.0.x-f59c00.svg)\
 ![GitHub](https://img.shields.io/github/license/starface-support/sf-debug.svg) 
- ![GitHub file size in bytes](https://img.shields.io/github/size/starface-support/sf-debug/debug.sh.svg)
+ ![GitHub file size in bytes](https://img.shields.io/github/size/starface-support/sf-debug/debug.sh.svg) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/starface-support/sf-debug/shellcheck?label=shellcheck)
 
 ## How to use this script?
 
