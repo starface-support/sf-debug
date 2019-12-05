@@ -10,6 +10,7 @@ finish() {
 		exit 1
   else
     if [[ -e "/var/spool/hylafax/log/" ]]; then _folders+=" /var/spool/hylafax/log/"; fi
+    if [[ -e "/var/coredumps/" ]]; then _folders+=" /var/coredumps/"; fi
     if [[ "$inclDialplan" = true ]]; then _folders+=" /etc/asterisk/ -x etc/asterisk/key*"; fi
 
     vecho "Finishing up, zipping $FOLDER and $_folders to $_ARCHIVE"
