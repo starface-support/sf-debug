@@ -6,19 +6,11 @@
 
 ## How to use this script?
 
-### Pre-Flight checklist
-
-#### Required
-
-- SSH Access to the STARFACE Appliance
-- [Root password](https://knowledge.starface.de/pages/viewpage.action?pageId=33784144)
-- An SSH / sFTP client
-
 ### Option 1: Download and execute
 
 - Download the script to your appliance (e.g. /root/debug.sh) and make it executable.
 For that, execute\
-`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh`\
+`curl -k --silent https://raw.githubusercontent.com/starface-support/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh`\
 within the shell (SSH).
 - Start the script (you can use [Parameters](#Parameters)):\
 `/root/debug.sh`
@@ -27,7 +19,7 @@ within the shell (SSH).
 ### Option 2: Execute via cURL
 
 - Execute\
-`curl -k --silent https://raw.githubusercontent.com/sf-janz/sf-debug/master/debug.sh | /bin/bash`
+`curl -k --silent https://raw.githubusercontent.com/starface-support/sf-debug/master/debug.sh | /bin/bash`
 - Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
 
 ### Parameters
@@ -51,8 +43,6 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h] [-u]
 - You've been tasked to verify integrity of all installed RPM Pakets. You don't need a Java memory dump:\
 `./debug.sh`
 - You just need the logfiles from the appliance:\
-`./debug.sh -r -a`
-- You don't want to include the passwords of the SIP accounts:\
-`./debug.sh -a`
+`./debug.sh -r`
 - Upload the logs to STARFACE Nextcloud share:
-`./debug.sh -u`
+`./debug.sh -r -u`
