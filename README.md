@@ -40,6 +40,8 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h] [-u]
 
 #### Examples
 
+[![asciicast](https://asciinema.org/a/X33aPRHajx6HJgGFtwqjgnTeh.svg)](https://asciinema.org/a/X33aPRHajx6HJgGFtwqjgnTeh)
+
 - You've been tasked to verify integrity of all installed RPM Pakets. You don't need a Java memory dump:\
 `./debug.sh`
 - You just need the logfiles from the appliance:\
