@@ -10,7 +10,7 @@
 
 - Download the script to your appliance (e.g. /root/debug.sh) and make it executable.
 For that, execute\
-`curl -k --silent https://raw.githubusercontent.com/starface-support/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh`\
+`curl --silent https://raw.githubusercontent.com/starface-support/sf-debug/master/debug.sh > /root/debug.sh && chmod +x /root/debug.sh`\
 within the shell (SSH).
 - Start the script (you can use [Parameters](#Parameters)):\
 `/root/debug.sh`
@@ -19,7 +19,7 @@ within the shell (SSH).
 ### Option 2: Execute via cURL
 
 - Execute\
-`curl -k --silent https://raw.githubusercontent.com/starface-support/sf-debug/master/debug.sh | /bin/bash`
+`curl --silent https://raw.githubusercontent.com/starface-support/sf-debug/master/debug.sh | /bin/bash`
 - Using SCP or sFTP, download the debuginfo-XXXXXXXX.zip from the /root/ folder.
 
 ### Parameters
