@@ -97,6 +97,9 @@ ast-details(){
   vecho "Retrieving ISDN configurations and alarms.."
   asterisk -rx 'pri show spans' &>"$AST/pri_spans.txt"
   asterisk -rx 'srx show layers' &>"$AST/srx_layers.txt"
+
+  vecho "Checking up on Hylafax sendq"
+  ls -lah /var/spool/hylafax/sendq/ &>"$AST/hylafax_sendq.txt"
 }
 
 java-details(){
