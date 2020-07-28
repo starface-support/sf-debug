@@ -8,5 +8,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-       - name: Shell Linter
-         uses: azohra/shell-linter@v0.1.0
+       - name: ShellCheck
+         uses: ludeeus/action-shellcheck@0.4.1
