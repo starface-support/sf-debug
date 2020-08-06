@@ -1,6 +1,6 @@
 # sf-debug
 
-![Maintenance](https://img.shields.io/maintenance/yes/2020.svg)![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.7.0.x-f59c00.svg)\
+![Maintenance](https://img.shields.io/maintenance/yes/2020.svg)![Supported STARFACE Versions](https://img.shields.io/badge/Supported%20Versions-6.0.0.0_--_6.7.2.x-f59c00.svg)\
 ![GitHub](https://img.shields.io/github/license/starface-support/sf-debug.svg) 
  ![GitHub file size in bytes](https://img.shields.io/github/size/starface-support/sf-debug/debug.sh.svg) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/starface-support/sf-debug/shellcheck?label=shellcheck)
 
@@ -43,8 +43,10 @@ debug.sh [-v|q] [-j] [-r] [-a] [-h] [-u]
 [![asciicast](https://asciinema.org/a/X33aPRHajx6HJgGFtwqjgnTeh.svg)](https://asciinema.org/a/X33aPRHajx6HJgGFtwqjgnTeh)
 
 - You've been tasked to verify integrity of all installed RPM Pakets. You don't need a Java memory dump:\
-`./debug.sh`
+`curl -sSL https://git.io/JJilh | /bin/bash`
 - You just need the logfiles from the appliance:\
-`./debug.sh -r`
-- Upload the logs to STARFACE Nextcloud share:
-`./debug.sh -r -u`
+`curl -sSL https://git.io/JJilh | /bin/bash -s -- -r`
+- Upload the logs to STARFACE Nextcloud share:\
+`curl -sSL https://git.io/JJilh | /bin/bash -s -- -u -r`
+- Upload the logs and a Javadump to STARFACE Nextcloud share:\
+`curl -sSL https://git.io/JJilh | /bin/bash -s -- -j -u -r`
