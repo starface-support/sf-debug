@@ -4,8 +4,10 @@ finish() {
   echodelim "Done!"
   _ARCHIVE="/root/$(mktemp -q -u debuginfo-XXXXXXXX.zip)"
   _folders="/var/log"
+  _folders+=" /var/starface/module/instances/repo/*/log/log.log"
+  _folders+=" /var/starface/fs-interface/"
 
-  if [[ ! -e $FOLDER ]]; then
+  if [[ ! -e "$FOLDER" ]]; then
     vecho "Tempfolder does not exist, nothing to do."
 		exit 1
   else
@@ -175,7 +177,7 @@ upload-nc(){
     exit_status=$?
     exec 3>&-
     case $exit_status in
-    $DIALOG_CANCEL)
+    "$DIALOG_CANCEL")
       echo "Canceled URI input"
       return
       ;;
@@ -206,12 +208,12 @@ showOptionsDialog(){
   exit_status=$?
   exec 3>&-
   case $exit_status in
-    $DIALOG_CANCEL)
+    "$DIALOG_CANCEL")
       clear
       echo "Program terminated."
       exit
       ;;
-    $DIALOG_ESC)
+    "$DIALOG_ESC")
       clear
       echo "Program aborted." >&2
       exit 1
